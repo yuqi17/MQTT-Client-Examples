@@ -13,9 +13,9 @@ const Connection = ({ connect, disconnect, connectBtn }) => {
   const [form] = Form.useForm()
   const initialConnectionOptions = {
     // ws or wss
-    protocol: 'ws',
+    protocol: 'wss',
     host: 'broker.emqx.io',
-    clientId: 'emqx_react_' + Math.random().toString(16).substring(2, 8),
+    clientId: 'mqttx_27004980',// 'emqx_react_' + Math.random().toString(16).substring(2, 8),
     // ws -> 8083; wss -> 8084
     port: 8083,
     /**
