@@ -8,8 +8,9 @@ const Publisher = ({ publish }) => {
 
   // topic, QoS for publishing message
   const record = {
-    topic: 'testtopic/react',
+    topic: 'switch',
     qos: 0,
+    payload: `{state:"on"}`
   };
 
   const onFinish = (values) => {

@@ -48,7 +48,7 @@ const HookMqtt = () => {
       // https://github.com/mqttjs/MQTT.js#event-connect
       client.on('connect', () => {
         setConnectStatus('Connected')
-        console.log('connection successful')
+        alert('connection successful')
       })
 
       // https://github.com/mqttjs/MQTT.js#event-error
