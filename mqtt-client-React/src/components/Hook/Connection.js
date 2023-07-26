@@ -17,13 +17,13 @@ const Connection = ({ connect, disconnect, connectBtn }) => {
     host: 'broker.emqx.io',
     clientId: 'mqttx_27004980',// 'emqx_react_' + Math.random().toString(16).substring(2, 8),
     // ws -> 8083; wss -> 8084
-    port: 8083,
+    port: 8084,
     /**
      * By default, EMQX allows clients to connect without authentication.
      * https://docs.emqx.com/en/enterprise/v4.4/advanced/auth.html#anonymous-login
      */
-    username: 'emqx_test',
-    password: 'emqx_test',
+    username: 'jonas',
+    password: 'abc123',
   }
 
   const handleProtocolChange = (value) => {
@@ -63,7 +63,7 @@ const Connection = ({ connect, disconnect, connectBtn }) => {
       onFinish={onFinish}
     >
       <Row gutter={20}>
-        <Col span={8}>
+        <Col lg={{ span: 8 }} sm={{ span: 24 }}>
           <Form.Item label="Protocol" name="protocol">
             <Select onChange={handleProtocolChange}>
               <Select.Option value="ws">ws</Select.Option>
@@ -71,27 +71,27 @@ const Connection = ({ connect, disconnect, connectBtn }) => {
             </Select>
           </Form.Item>
         </Col>
-        <Col span={8}>
+        <Col lg={{ span: 8 }} sm={{ span: 24 }}>
           <Form.Item label="Host" name="host">
             <Input />
           </Form.Item>
         </Col>
-        <Col span={8}>
+        <Col lg={{ span: 8 }} sm={{ span: 24 }}>
           <Form.Item label="Port" name="port">
             <Input />
           </Form.Item>
         </Col>
-        <Col span={8}>
+        <Col lg={{ span: 8 }} sm={{ span: 24 }}>
           <Form.Item label="Client ID" name="clientId">
             <Input />
           </Form.Item>
         </Col>
-        <Col span={8}>
+        <Col lg={{ span: 8 }} sm={{ span: 24 }}>
           <Form.Item label="Username" name="username">
             <Input />
           </Form.Item>
         </Col>
-        <Col span={8}>
+        <Col lg={{ span: 8 }} sm={{ span: 24 }}>
           <Form.Item label="Password" name="password">
             <Input />
           </Form.Item>

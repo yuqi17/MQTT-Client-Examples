@@ -23,13 +23,17 @@ const Receiver = ({ payload }) => {
     <Card
       title="Receiver"
     >
-      <List
-        size="small"
-        bordered
-        dataSource={messages}
-        renderItem={renderListItem}
-      />
+      <div style={{ height: 200, overflowY: 'scroll' }}>
+        <List
+          size="small"
+
+          bordered
+          dataSource={messages}
+          renderItem={renderListItem}
+        />
+      </div>
     </Card>
+
   );
 }
 

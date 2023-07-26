@@ -4,6 +4,7 @@ import Publisher from './Publisher'
 import Subscriber from './Subscriber'
 import Receiver from './Receiver'
 import mqtt from 'mqtt'
+import { notification } from 'antd'
 
 export const QosOption = createContext([])
 // https://github.com/mqttjs/MQTT.js#qos
@@ -48,12 +49,15 @@ const HookMqtt = () => {
       // https://github.com/mqttjs/MQTT.js#event-connect
       client.on('connect', () => {
         setConnectStatus('Connected')
-        alert('connection successful')
+        notification.success({
+          message: 'connection successful'
+        })
       })
 
       // https://github.com/mqttjs/MQTT.js#event-error
       client.on('error', (err) => {
-        console.error('Connection error: ', err)
+        notification.error('Connection error! ')
+        console.log(err)
         client.end()
       })
 
@@ -78,7 +82,9 @@ const HookMqtt = () => {
       try {
         client.end(false, () => {
           setConnectStatus('Connect')
-          console.log('disconnected successfully')
+          notification.success({
+            message: 'disconnected successfully'
+          })
         })
       } catch (error) {
         console.log('disconnect error:', error)

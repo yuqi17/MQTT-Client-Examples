@@ -30,17 +30,17 @@ const Subscriber = ({ sub, unSub, showUnsub }) => {
       onFinish={onFinish}
     >
       <Row gutter={20}>
-        <Col span={12}>
+        <Col lg={{ span: 12 }} sm={{ span: 24 }} >
           <Form.Item label="Topic" name="topic">
             <Input />
           </Form.Item>
         </Col>
-        <Col span={12}>
+        <Col lg={{ span: 12 }} sm={{ span: 24 }}>
           <Form.Item label="QoS" name="qos">
             <Select options={qosOptions} />
           </Form.Item>
         </Col>
-        <Col span={8} offset={16} style={{ textAlign: 'right' }}>
+        <Col lg={{ span: 12 }} sm={{ span: 24 }} >
           <Form.Item>
             <Button type="primary" htmlType="submit">
               Subscribe
