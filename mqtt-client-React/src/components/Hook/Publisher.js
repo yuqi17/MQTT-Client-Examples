@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Card, Form, Input, Row, Col, Button, Select } from 'antd';
+import { Card, Form, Input, Row, Col, Button, Select, Switch } from 'antd';
 import { QosOption } from './index'
 
 const Publisher = ({ publish }) => {
@@ -56,6 +56,17 @@ const Publisher = ({ publish }) => {
               Publish
             </Button>
           </Form.Item>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked={false} onChange={(checked, _) => {
+            publish({
+              topic: 'switch',
+              qos: 0,
+              payload: `{state:"${checked ? 'on' : 'off'}"}`
+            })
+          }} />
         </Col>
       </Row>
     </Form>
