@@ -58,15 +58,28 @@ const Publisher = ({ publish }) => {
           </Form.Item>
         </Col>
       </Row>
-      <Row>
+      <Row gutter={8}>
         <Col>
-          <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked={false} onChange={(checked, _) => {
-            publish({
-              topic: 'switch',
-              qos: 0,
-              payload: `{state:"${checked ? 'on' : 'off'}"}`
-            })
-          }} />
+          <Button
+            type="danger"
+            onClick={() => {
+              publish({
+                topic: 'switch',
+                qos: 0,
+                payload: `{state:"off"}`
+              })
+            }}>关闭</Button>
+        </Col>
+        <Col>
+          <Button
+            type="primary"
+            onClick={() => {
+              publish({
+                topic: 'switch',
+                qos: 0,
+                payload: `{state:"on"}`
+              })
+            }}>开启</Button>
         </Col>
       </Row>
     </Form>

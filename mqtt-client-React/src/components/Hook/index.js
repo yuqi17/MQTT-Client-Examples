@@ -2,12 +2,10 @@ import React, { createContext, useEffect, useState } from 'react'
 import Connection from './Connection'
 import Publisher from './Publisher'
 import Subscriber from './Subscriber'
-import Receiver from './Receiver'
 import mqtt from 'mqtt'
 import { notification } from 'antd'
 
 export const QosOption = createContext([])
-// https://github.com/mqttjs/MQTT.js#qos
 const qosOption = [
   {
     label: '0',
@@ -21,12 +19,28 @@ const qosOption = [
     label: '2',
     value: 2,
   },
-]
+];
+
+function Weather({ data = {} }) {
+  return (
+    <div style={{ backgroundColor: '#fff', color: '#000', textAlign: 'center', fontSize: 14, width: '100%', padding: '8px' }}>
+      <span style={{ marginRight: 10 }}>
+        温度:{`${data.temperature}℃`}
+      </span>
+
+      <span>
+        湿度:{`${data.humidity}%`}
+      </span>
+    </div>
+  )
+}
 
 const HookMqtt = () => {
   const [client, setClient] = useState(null)
-  const [isSubed, setIsSub] = useState(false)
-  const [payload, setPayload] = useState({})
+  const [weather, setWeather] = useState({
+    humidity: 0,
+    temperature: 0
+  })
   const [connectStatus, setConnectStatus] = useState('Connect')
 
   const mqttConnect = (host, mqttOption) => {
@@ -64,9 +78,15 @@ const HookMqtt = () => {
       })
 
       client.on('message', (topic, message) => {
-        const payload = { topic, message: message.toString() }
-        setPayload(payload)
         console.log(`received message: ${message} from topic: ${topic}`)
+        console.log(typeof message, '<<<< message type')
+        if (topic == 'weather') {
+          setWeather(message)
+        } else if (topic == 'switch/feedback') {
+          notification.info({
+            message: message
+          })
+        }
       })
     }
   }, [client])
@@ -89,7 +109,6 @@ const HookMqtt = () => {
 
   const mqttPublish = (context) => {
     if (client) {
-      // topic, QoS & payload for publishing message
       const { topic, qos, payload } = context
       client.publish(topic, payload, { qos }, (error) => {
         if (error) {
@@ -99,8 +118,19 @@ const HookMqtt = () => {
     }
   }
 
-  // unsubscribe topic
-  // https://github.com/mqttjs/MQTT.js#mqttclientunsubscribetopictopic-array-options-callback
+  const mqttSub = (subscription) => {
+    if (client) {
+      const { topic, qos } = subscription
+      client.subscribe(topic, { qos }, (error) => {
+        if (error) {
+          console.log('Subscribe to topics error', error)
+          return
+        }
+        console.log(`Subscribe to topics: ${topic}`)
+      })
+    }
+  }
+
   const mqttUnSub = (subscription) => {
     if (client) {
       const { topic, qos } = subscription
@@ -110,7 +140,6 @@ const HookMqtt = () => {
           return
         }
         console.log(`unsubscribed topic: ${topic}`)
-        setIsSub(false)
       })
     }
   }
@@ -122,6 +151,9 @@ const HookMqtt = () => {
         disconnect={mqttDisconnect}
         connectBtn={connectStatus}
       />
+
+      <Weather data={weather} />
+
       <QosOption.Provider value={qosOption}>
         <Subscriber
           params={{
@@ -130,16 +162,11 @@ const HookMqtt = () => {
           }}
           unSub={mqttUnSub}
         />
-        <Subscriber
-          params={{
-            topic: 'swtich/feedback',
-            qos: 0,
-          }}
-          unSub={mqttUnSub}
-        />
+
         <Publisher publish={mqttPublish} />
+
       </QosOption.Provider>
-      <Receiver payload={payload} />
+
     </>
   )
 }
