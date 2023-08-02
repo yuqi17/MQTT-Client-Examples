@@ -31,42 +31,38 @@ const HookMqtt = () => {
 
   const mqttConnect = (host, mqttOption) => {
     setConnectStatus('Connecting')
-    /**
-     * if protocol is "ws", connectUrl = "ws://broker.emqx.io:8083/mqtt"
-     * if protocol is "wss", connectUrl = "wss://broker.emqx.io:8084/mqtt"
-     *
-     * /mqtt: MQTT-WebSocket uniformly uses /path as the connection path,
-     * which should be specified when connecting, and the path used on EMQX is /mqtt.
-     *
-     * for more details about "mqtt.connect" method & options,
-     * please refer to https://github.com/mqttjs/MQTT.js#mqttconnecturl-options
-     */
     setClient(mqtt.connect(host, mqttOption))
   }
 
   useEffect(() => {
     if (client) {
-      // https://github.com/mqttjs/MQTT.js#event-connect
       client.on('connect', () => {
         setConnectStatus('Connected')
         notification.success({
           message: 'connection successful'
-        })
+        });
+
+        mqttSub({
+          topic: 'weather',
+          qos: 0
+        });
+
+        mqttSub({
+          topic: 'switch/feedback',
+          qos: 0
+        });
       })
 
-      // https://github.com/mqttjs/MQTT.js#event-error
       client.on('error', (err) => {
         notification.error('Connection error! ')
         console.log(err)
         client.end()
       })
 
-      // https://github.com/mqttjs/MQTT.js#event-reconnect
       client.on('reconnect', () => {
         setConnectStatus('Reconnecting')
       })
 
-      // https://github.com/mqttjs/MQTT.js#event-message
       client.on('message', (topic, message) => {
         const payload = { topic, message: message.toString() }
         setPayload(payload)
@@ -75,8 +71,7 @@ const HookMqtt = () => {
     }
   }, [client])
 
-  // disconnect
-  // https://github.com/mqttjs/MQTT.js#mqttclientendforce-options-callback
+
   const mqttDisconnect = () => {
     if (client) {
       try {
@@ -92,8 +87,6 @@ const HookMqtt = () => {
     }
   }
 
-  // publish message
-  // https://github.com/mqttjs/MQTT.js#mqttclientpublishtopic-message-options-callback
   const mqttPublish = (context) => {
     if (client) {
       // topic, QoS & payload for publishing message
@@ -102,23 +95,6 @@ const HookMqtt = () => {
         if (error) {
           console.log('Publish error: ', error)
         }
-      })
-    }
-  }
-
-  const mqttSub = (subscription) => {
-    if (client) {
-      // topic & QoS for MQTT subscribing
-      const { topic, qos } = subscription
-      // subscribe topic
-      // https://github.com/mqttjs/MQTT.js#mqttclientsubscribetopictopic-arraytopic-object-options-callback
-      client.subscribe(topic, { qos }, (error) => {
-        if (error) {
-          console.log('Subscribe to topics error', error)
-          return
-        }
-        console.log(`Subscribe to topics: ${topic}`)
-        setIsSub(true)
       })
     }
   }
@@ -147,7 +123,20 @@ const HookMqtt = () => {
         connectBtn={connectStatus}
       />
       <QosOption.Provider value={qosOption}>
-        <Subscriber sub={mqttSub} unSub={mqttUnSub} showUnsub={isSubed} />
+        <Subscriber
+          params={{
+            topic: 'weather',
+            qos: 0,
+          }}
+          unSub={mqttUnSub}
+        />
+        <Subscriber
+          params={{
+            topic: 'swtich/feedback',
+            qos: 0,
+          }}
+          unSub={mqttUnSub}
+        />
         <Publisher publish={mqttPublish} />
       </QosOption.Provider>
       <Receiver payload={payload} />

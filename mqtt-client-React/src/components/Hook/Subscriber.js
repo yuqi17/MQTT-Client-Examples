@@ -2,19 +2,9 @@ import React, { useContext } from 'react'
 import { Card, Form, Input, Row, Col, Button, Select } from 'antd'
 import { QosOption } from './index'
 
-const Subscriber = ({ sub, unSub, showUnsub }) => {
+const Subscriber = ({ params = {}, unSub }) => {
   const [form] = Form.useForm()
   const qosOptions = useContext(QosOption)
-
-  // topic & QoS for MQTT subscribing
-  const record = {
-    topic: 'weather',
-    qos: 0,
-  }
-
-  const onFinish = (values) => {
-    sub(values)
-  }
 
   const handleUnsub = () => {
     const values = form.getFieldsValue()
@@ -26,8 +16,7 @@ const Subscriber = ({ sub, unSub, showUnsub }) => {
       layout="vertical"
       name="basic"
       form={form}
-      initialValues={record}
-      onFinish={onFinish}
+      initialValues={params}
     >
       <Row gutter={20}>
         <Col lg={{ span: 12 }} sm={{ span: 24 }} >
@@ -42,18 +31,13 @@ const Subscriber = ({ sub, unSub, showUnsub }) => {
         </Col>
         <Col lg={{ span: 12 }} sm={{ span: 24 }} >
           <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Subscribe
-            </Button>
-            {showUnsub ? (
-              <Button
-                type="danger"
-                style={{ marginLeft: '10px' }}
-                onClick={handleUnsub}
-              >
-                Unsubscribe
+            <Button
+              type="danger"
+              style={{ marginLeft: '10px' }}
+              onClick={handleUnsub}
+            >
+              Unsubscribe
               </Button>
-            ) : null}
           </Form.Item>
         </Col>
       </Row>
