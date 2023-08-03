@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Card, Button, Form, Input, Row, Col, Select } from 'antd'
 
 /**
@@ -10,7 +10,10 @@ import { Card, Button, Form, Input, Row, Col, Select } from 'antd'
  */
 
 const Connection = ({ connect, disconnect, connectBtn }) => {
-  const [form] = Form.useForm()
+  const [form] = Form.useForm();
+
+  const [expand, setExpand] = useState(true);
+
   const initialConnectionOptions = {
     // ws or wss
     protocol: 'wss',
@@ -103,16 +106,20 @@ const Connection = ({ connect, disconnect, connectBtn }) => {
   return (
     <Card
       title="Connection"
-      actions={[
+      extra={
+        <Button onClick={() => setExpand(!expand)} type='link'>{expand ? '收起' : '展开'}</Button>
+      }
+      bodyStyle={{ display: expand ? 'block' : 'none' }}
+      actions={expand ? [
         <Button type="primary" onClick={handleConnect}>
           {connectBtn}
         </Button>,
         <Button danger onClick={handleDisconnect}>
           Disconnect
         </Button>,
-      ]}
+      ] : null}
     >
-      {ConnectionForm}
+      {expand && ConnectionForm}
     </Card>
   )
 }
