@@ -21,6 +21,10 @@ const qosOption = [
   },
 ];
 
+function decodeUint8Arr(uint8array) {
+  return new TextDecoder("utf-8").decode(uint8array);
+}
+
 function Weather({ data = {} }) {
   return (
     <div style={{ backgroundColor: '#fff', color: '#000', textAlign: 'center', fontSize: 14, width: '100%', padding: '8px' }}>
@@ -75,16 +79,16 @@ const HookMqtt = () => {
 
       client.on('reconnect', () => {
         setConnectStatus('Reconnecting')
-      })
+      });
 
-      client.on('message', (topic, message) => {
+      client.on('message', (topic, message) => {// topic 是string, message是 uint8_array 
         console.log(`received message: ${message} from topic: ${topic}`)
-        console.log(typeof message, '<<<< message type')
         if (topic == 'weather') {
-          setWeather(message)
+          const data = JSON.parse(`${message}`)
+          setWeather(data)
         } else if (topic == 'switch/feedback') {
           notification.info({
-            message: message
+            message: `${message}`
           })
         }
       })
