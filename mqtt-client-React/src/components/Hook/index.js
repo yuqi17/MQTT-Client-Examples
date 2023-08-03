@@ -4,6 +4,8 @@ import Publisher from './Publisher'
 import Subscriber from './Subscriber'
 import mqtt from 'mqtt'
 import { notification } from 'antd'
+import ReactECharts from 'echarts-for-react';
+
 
 export const QosOption = createContext([])
 const qosOption = [
@@ -21,13 +23,17 @@ const qosOption = [
   },
 ];
 
-function decodeUint8Arr(uint8array) {
-  return new TextDecoder("utf-8").decode(uint8array);
+
+function getTime(nowDate) {
+  return `${nowDate.getHours()}:${nowDate.getMinutes()}:${nowDate.getSeconds()}`
 }
 
 function Weather({ data = {} }) {
   return (
     <div style={{ backgroundColor: '#fff', color: '#000', textAlign: 'center', fontSize: 14, width: '100%', padding: '8px' }}>
+      <span style={{ marginRight: 10 }}>
+        当前:
+     </span>
       <span style={{ marginRight: 10 }}>
         温度:{`${data.temperature}℃`}
       </span>
@@ -37,14 +43,18 @@ function Weather({ data = {} }) {
       </span>
     </div>
   )
-}
+};
+
+let tmps = [];
 
 const HookMqtt = () => {
   const [client, setClient] = useState(null)
   const [weather, setWeather] = useState({
     humidity: 0,
     temperature: 0
-  })
+  });
+  const [list, setList] = useState([]);
+
   const [connectStatus, setConnectStatus] = useState('Connect')
 
   const mqttConnect = (host, mqttOption) => {
@@ -59,17 +69,15 @@ const HookMqtt = () => {
         notification.success({
           message: 'connection successful'
         });
-
         mqttSub({
           topic: 'weather',
           qos: 0
         });
-
         mqttSub({
           topic: 'switch/feedback',
           qos: 0
         });
-      })
+      });
 
       client.on('error', (err) => {
         notification.error('Connection error! ')
@@ -81,17 +89,22 @@ const HookMqtt = () => {
         setConnectStatus('Reconnecting')
       });
 
+      // 
+
       client.on('message', (topic, message) => {// topic 是string, message是 uint8_array 
         console.log(`received message: ${message} from topic: ${topic}`)
         if (topic == 'weather') {
-          const data = JSON.parse(`${message}`)
-          setWeather(data)
+          const data = JSON.parse(`${message}`);// { humidity:20, temperature:13}
+          setWeather(data);
+          tmps = [...tmps, { ...data, time: getTime(new Date()) }];
+          console.log(tmps, '<<<')
+          setList(tmps);
         } else if (topic == 'switch/feedback') {
           notification.info({
             message: `${message}`
           })
         }
-      })
+      });
     }
   }, [client])
 
@@ -157,6 +170,35 @@ const HookMqtt = () => {
       />
 
       <Weather data={weather} />
+
+      <div style={{ background: '#fff', width: '100%' }}>
+        <ReactECharts
+          option={{
+            xAxis: {
+              type: 'category',
+              data: list.map(item => item.time),
+            },
+            yAxis: {
+              type: 'value',
+            },
+            series: [
+              {
+                data: list.map(item => item.humidity),
+                type: 'line',
+                smooth: true,
+              },
+              {
+                data: list.map(item => item.temperature),
+                type: 'line',
+                smooth: true,
+              },
+            ],
+            tooltip: {
+              trigger: 'axis',
+            }
+          }} />
+      </div>
+
 
       <QosOption.Provider value={qosOption}>
         <Subscriber

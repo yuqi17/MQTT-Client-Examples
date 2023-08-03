@@ -7,13 +7,16 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "antd": "^4.7.0",
+    "dayjs": "^1.11.9",
+    "echarts": "^5.4.3",
+    "echarts-for-react": "^3.0.2",
     "mqtt": "^4.3.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "3.4.3"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "set  \"GENERATE_SOURCEMAP=true\" && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
