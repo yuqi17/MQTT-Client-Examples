@@ -45,8 +45,6 @@ function Weather({ data = {} }) {
   )
 };
 
-let tmps = [];
-
 const HookMqtt = () => {
   const [client, setClient] = useState(null)
   const [weather, setWeather] = useState({
@@ -92,13 +90,11 @@ const HookMqtt = () => {
       // 
 
       client.on('message', (topic, message) => {// topic 是string, message是 uint8_array 
-        console.log(`received message: ${message} from topic: ${topic}`)
+        console.log(`received message:\n ${message} \n from topic: ${topic}`)
         if (topic == 'weather') {
           const data = JSON.parse(`${message}`);// { humidity:20, temperature:13}
           setWeather(data);
-          tmps = [...tmps, { ...data, time: getTime(new Date()) }];
-          console.log(tmps, '<<<')
-          setList(tmps);
+          setList(oldValue => [...oldValue, { ...data, time: getTime(new Date()) }]);
         } else if (topic == 'switch/feedback') {
           notification.info({
             message: `${message}`
@@ -174,6 +170,9 @@ const HookMqtt = () => {
       <div style={{ background: '#fff', width: '100%' }}>
         <ReactECharts
           option={{
+            legend: {
+              data: ['温度', '湿度']
+            },
             xAxis: {
               type: 'category',
               data: list.map(item => item.time),
@@ -183,11 +182,13 @@ const HookMqtt = () => {
             },
             series: [
               {
+                name: '湿度',
                 data: list.map(item => item.humidity),
                 type: 'line',
                 smooth: true,
               },
               {
+                name: '温度',
                 data: list.map(item => item.temperature),
                 type: 'line',
                 smooth: true,
