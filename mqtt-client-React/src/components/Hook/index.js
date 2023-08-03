@@ -176,10 +176,23 @@ const HookMqtt = () => {
             xAxis: {
               type: 'category',
               data: list.map(item => item.time),
+              axisLabel: {
+                rotate: 45,
+                interval: 0// 每隔一个标签显示一个
+              }
             },
             yAxis: {
               type: 'value',
             },
+            // 设置缩放滑块
+            dataZoom: [
+              {
+                type: 'slider',
+                xAxisIndex: 0,
+                start: 0,
+                end: 100
+              }
+            ],
             series: [
               {
                 name: '湿度',
