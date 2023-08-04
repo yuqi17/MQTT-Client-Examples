@@ -1,11 +1,9 @@
-import React, { createContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Connection from './Connection'
 import mqtt from 'mqtt'
 import { Button, notification } from 'antd'
 import ReactECharts from 'echarts-for-react';
 import dayjs from 'dayjs';
-
-export const QosOption = createContext([])
 
 function getTime() {
   return dayjs().format('HH:mm:ss')
@@ -34,8 +32,7 @@ const HookMqtt = () => {
     humidity: 0,
     temperature: 0
   });
-  const [list, setList] = useState([{ humidity: 20, temperature: 80, time: getTime() }]);
-
+  const [list, setList] = useState([]);
   const [connectStatus, setConnectStatus] = useState('Connect')
 
   const mqttConnect = (host, mqttOption) => {
@@ -46,10 +43,12 @@ const HookMqtt = () => {
   useEffect(() => {
     if (client) {
       client.on('connect', () => {
-        setConnectStatus('Connected')
+        setConnectStatus('Connected');
+
         notification.success({
           message: 'connection successful'
         });
+
         mqttSub({
           topic: 'weather',
           qos: 0
@@ -58,6 +57,7 @@ const HookMqtt = () => {
           topic: 'switch/feedback',
           qos: 0
         });
+
       });
 
       client.on('error', (err) => {
@@ -69,8 +69,6 @@ const HookMqtt = () => {
       client.on('reconnect', () => {
         setConnectStatus('Reconnecting')
       });
-
-      // 
 
       client.on('message', (topic, message) => {// topic 是string, message是 uint8_array 
         console.log(`received message:\n ${message} \n from topic: ${topic}`)
@@ -86,7 +84,6 @@ const HookMqtt = () => {
       });
     }
   }, [client])
-
 
   const mqttDisconnect = () => {
     if (client) {
