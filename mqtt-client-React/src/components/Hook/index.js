@@ -1,29 +1,11 @@
 import React, { createContext, useEffect, useState } from 'react'
 import Connection from './Connection'
-import Publisher from './Publisher'
-import Subscriber from './Subscriber'
 import mqtt from 'mqtt'
-import { notification } from 'antd'
+import { Button, notification } from 'antd'
 import ReactECharts from 'echarts-for-react';
 import dayjs from 'dayjs';
 
-
 export const QosOption = createContext([])
-const qosOption = [
-  {
-    label: '0',
-    value: 0,
-  },
-  {
-    label: '1',
-    value: 1,
-  },
-  {
-    label: '2',
-    value: 2,
-  },
-];
-
 
 function getTime() {
   return dayjs().format('HH:mm:ss')
@@ -145,18 +127,6 @@ const HookMqtt = () => {
     }
   }
 
-  const mqttUnSub = (subscription) => {
-    if (client) {
-      const { topic, qos } = subscription
-      client.unsubscribe(topic, { qos }, (error) => {
-        if (error) {
-          console.log('Unsubscribe error', error)
-          return
-        }
-        console.log(`unsubscribed topic: ${topic}`)
-      })
-    }
-  }
 
   return (
     <>
@@ -168,7 +138,7 @@ const HookMqtt = () => {
 
       <Weather data={weather} />
 
-      <div style={{ background: '#fff', width: '100%' }}>
+      <div style={{ background: '#fff', width: '100%', marginBottom: 20 }}>
         <ReactECharts
           option={{
             legend: {
@@ -215,20 +185,22 @@ const HookMqtt = () => {
           }} />
       </div>
 
-
-      {/* <QosOption.Provider value={qosOption}>
-        <Subscriber
-          params={{
-            topic: 'weather',
+      <div style={{ backgroundColor: '#fff', padding: 10, width: '100%', display: 'flex', justifyContent: 'space-around' }}>
+        <Button type='danger' onClick={() => {
+          mqttPublish({
             qos: 0,
-          }}
-          unSub={mqttUnSub}
-        />
-
-        <Publisher publish={mqttPublish} />
-
-      </QosOption.Provider> */}
-
+            topic: 'switch',
+            payload: `{state:"off"}`
+          })
+        }}>关闭空调</Button>
+        <Button type='primary' onClick={() => {
+          mqttPublish({
+            qos: 0,
+            topic: 'switch',
+            payload: `{state:"on"}`
+          })
+        }}>打开空调</Button>
+      </div>
     </>
   )
 }
