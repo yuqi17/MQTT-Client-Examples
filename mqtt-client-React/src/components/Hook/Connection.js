@@ -18,7 +18,7 @@ const Connection = ({ connect, disconnect, connectBtn }) => {
     // ws or wss
     protocol: 'wss',
     host: 'broker.emqx.io',
-    clientId: 'mqttx_27004980',// 'emqx_react_' + Math.random().toString(16).substring(2, 8),
+    clientId: 'emqx_react_' + Math.random().toString(16).substring(2, 8),// 一个clientId 只能绑定一次, 两个绑定一样的clientId 会导致都连接不上
     // ws -> 8083; wss -> 8084
     port: 8084,
     /**
@@ -67,7 +67,7 @@ const Connection = ({ connect, disconnect, connectBtn }) => {
     >
       <Row gutter={20}>
         <Col lg={{ span: 8 }} sm={{ span: 24 }}>
-          <Form.Item label="Protocol" name="protocol">
+          <Form.Item label="协议" name="protocol">
             <Select onChange={handleProtocolChange}>
               <Select.Option value="ws">ws</Select.Option>
               <Select.Option value="wss">wss</Select.Option>
@@ -75,27 +75,27 @@ const Connection = ({ connect, disconnect, connectBtn }) => {
           </Form.Item>
         </Col>
         <Col lg={{ span: 8 }} sm={{ span: 24 }}>
-          <Form.Item label="Host" name="host">
+          <Form.Item label="主机" name="host">
             <Input />
           </Form.Item>
         </Col>
         <Col lg={{ span: 8 }} sm={{ span: 24 }}>
-          <Form.Item label="Port" name="port">
+          <Form.Item label="端口" name="port">
             <Input />
           </Form.Item>
         </Col>
         <Col lg={{ span: 8 }} sm={{ span: 24 }}>
-          <Form.Item label="Client ID" name="clientId">
+          <Form.Item label="客户端ID" name="clientId">
             <Input />
           </Form.Item>
         </Col>
         <Col lg={{ span: 8 }} sm={{ span: 24 }}>
-          <Form.Item label="Username" name="username">
+          <Form.Item label="用户名" name="username">
             <Input />
           </Form.Item>
         </Col>
         <Col lg={{ span: 8 }} sm={{ span: 24 }}>
-          <Form.Item label="Password" name="password">
+          <Form.Item label="密码" name="password">
             <Input />
           </Form.Item>
         </Col>
@@ -105,7 +105,7 @@ const Connection = ({ connect, disconnect, connectBtn }) => {
 
   return (
     <Card
-      title="Connection"
+      title="MQTT连接"
       extra={
         <Button onClick={() => setExpand(!expand)} type='link'>{expand ? '收起' : '展开'}</Button>
       }
@@ -115,7 +115,7 @@ const Connection = ({ connect, disconnect, connectBtn }) => {
           {connectBtn}
         </Button>,
         <Button danger onClick={handleDisconnect}>
-          Disconnect
+          关闭连接
         </Button>,
       ] : null}
     >

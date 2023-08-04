@@ -33,20 +33,20 @@ const HookMqtt = () => {
     temperature: 0
   });
   const [list, setList] = useState([]);
-  const [connectStatus, setConnectStatus] = useState('Connect')
+  const [connectStatus, setConnectStatus] = useState('连接')
 
   const mqttConnect = (host, mqttOption) => {
-    setConnectStatus('Connecting')
+    setConnectStatus('连接中...')
     setClient(mqtt.connect(host, mqttOption))
   }
 
   useEffect(() => {
     if (client) {
       client.on('connect', () => {
-        setConnectStatus('Connected');
+        setConnectStatus('已连接');
 
         notification.success({
-          message: 'connection successful'
+          message: '连接成功!'
         });
 
         mqttSub({
@@ -61,13 +61,13 @@ const HookMqtt = () => {
       });
 
       client.on('error', (err) => {
-        notification.error('Connection error! ')
+        notification.error('连接出现错误! ')
         console.log(err)
         client.end()
       })
 
       client.on('reconnect', () => {
-        setConnectStatus('Reconnecting')
+        setConnectStatus('重连中...')
       });
 
       client.on('message', (topic, message) => {// topic 是string, message是 uint8_array 
@@ -89,9 +89,9 @@ const HookMqtt = () => {
     if (client) {
       try {
         client.end(false, () => {
-          setConnectStatus('Connect')
-          notification.success({
-            message: 'disconnected successfully'
+          setConnectStatus('连接')
+          notification.warning({
+            message: '连接已关闭!'
           })
         })
       } catch (error) {
@@ -123,7 +123,6 @@ const HookMqtt = () => {
       })
     }
   }
-
 
   return (
     <>
