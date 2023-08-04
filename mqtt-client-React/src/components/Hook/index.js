@@ -5,6 +5,7 @@ import Subscriber from './Subscriber'
 import mqtt from 'mqtt'
 import { notification } from 'antd'
 import ReactECharts from 'echarts-for-react';
+import dayjs from 'dayjs';
 
 
 export const QosOption = createContext([])
@@ -24,8 +25,8 @@ const qosOption = [
 ];
 
 
-function getTime(nowDate) {
-  return `${nowDate.getHours()}:${nowDate.getMinutes()}:${nowDate.getSeconds()}`
+function getTime() {
+  return dayjs().format('HH:mm:ss')
 }
 
 function Weather({ data = {} }) {
@@ -51,7 +52,7 @@ const HookMqtt = () => {
     humidity: 0,
     temperature: 0
   });
-  const [list, setList] = useState([]);
+  const [list, setList] = useState([{ humidity: 20, temperature: 80, time: getTime() }]);
 
   const [connectStatus, setConnectStatus] = useState('Connect')
 
@@ -177,6 +178,7 @@ const HookMqtt = () => {
               type: 'category',
               data: list.map(item => item.time),
               axisLabel: {
+                show: false,
                 rotate: 45,
                 interval: 0// 每隔一个标签显示一个
               }
@@ -214,7 +216,7 @@ const HookMqtt = () => {
       </div>
 
 
-      <QosOption.Provider value={qosOption}>
+      {/* <QosOption.Provider value={qosOption}>
         <Subscriber
           params={{
             topic: 'weather',
@@ -225,7 +227,7 @@ const HookMqtt = () => {
 
         <Publisher publish={mqttPublish} />
 
-      </QosOption.Provider>
+      </QosOption.Provider> */}
 
     </>
   )
